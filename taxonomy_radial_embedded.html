@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Candidate Taxonomy - Radial View</title>
+  <style>
+    :root { --blue:#24527a; --ink:#263746; --muted:#657584; --line:#d8e0e7; --bg:#f5f7f9; --panel:#fff; --scale:1; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:transparent; font:calc(14px * var(--scale))/1.45 Arial, Helvetica, sans-serif; }
+    header { display:none; }
+    .header-inner { max-width:1500px; margin:auto; display:flex; align-items:flex-start; justify-content:space-between; gap:25px; }
+    h1 { margin:0; color:#183e5c; font-size:calc(25px * var(--scale)); font-weight:600; }
+    .subtitle { margin:5px 0 0; color:var(--muted); font-size:calc(13px * var(--scale)); }
+    .meta { color:var(--muted); font-size:calc(12px * var(--scale)); text-align:right; }
+    .font-tools { display:flex; align-items:center; gap:4px; margin-top:2px; }
+    .font-tools button { min-width:31px; padding:6px 8px; color:#36566d; border:1px solid #cbd5dd; border-radius:3px; background:#fff; cursor:pointer; font:inherit; }
+    .font-tools button:hover { background:#edf3f7; border-color:#91aabd; }
+    main { max-width:none; margin:0; padding:0 8px 12px; }
+    .layout { display:grid; grid-template-columns:minmax(0,1fr) 240px; gap:18px; align-items:start; }
+    .panel { border:0; border-radius:0; background:transparent; }
+    .panel h2 { margin:0; padding:10px 0; border-bottom:1px solid var(--line); color:#244f70; font-size:calc(15px * var(--scale)); font-weight:600; }
+    .panel-body { padding:12px 0; }
+    .control { margin-bottom:20px; min-width:0; }
+    .control:last-child { margin-bottom:0; }
+    .control-title { display:block; margin-bottom:8px; color:#465967; font-size:calc(12px * var(--scale)); font-weight:600; }
+    select, input { width:100%; padding:8px 9px; color:var(--ink); border:1px solid #cbd5dd; border-radius:3px; background:#fff; font:inherit; }
+    .check { display:flex; align-items:center; gap:8px; margin:7px 0; color:#485c6b; font-size:calc(12px * var(--scale)); }
+    .check input { width:auto; }
+    .legend-row { display:flex; align-items:center; gap:8px; margin:7px 0; color:#526572; font-size:11px; }
+    .legend-swatch { width:15px; height:15px; border:1px solid rgba(0,0,0,.12); border-radius:2px; }
+    .chart-panel { min-width:0; overflow:hidden; }
+    .chart-head { display:none; }
+    .chart-head strong { color:#244f70; font-size:calc(14px * var(--scale)); font-weight:600; }
+    .chart-head span { color:var(--muted); font-size:calc(11px * var(--scale)); }
+    #chart { display:block; width:100%; height:610px; min-height:0; background:transparent; border:0; cursor:default; }
+    .family-label { font-size:calc(10px * var(--scale)); font-weight:600; fill:#344c5e; }
+    .family-code { font-size:10px; font-weight:700; fill:#244f70; }
+    .grid-line { fill:none; stroke:#dce3e8; stroke-width:1; }
+    .spoke { stroke:#e5eaee; stroke-width:1; }
+    .cell { stroke:#fff; stroke-width:1.2; cursor:pointer; transition:opacity .12s; }
+    .cell.dim { opacity:.14; }
+    .cell:hover, .cell.selected { stroke:#183e5c; stroke-width:2.4; opacity:1; }
+    .marker { pointer-events:none; stroke:#fff; stroke-width:1; }
+    .center-title { fill:#244f70; font-size:calc(14px * var(--scale)); font-weight:600; text-anchor:middle; }
+    .center-sub { fill:#72818d; font-size:calc(10px * var(--scale)); text-anchor:middle; }
+    .details { min-height:250px; margin-top:28px; border-left:1px solid var(--line); padding-left:18px; }
+    .empty { color:var(--muted); font-size:calc(12px * var(--scale)); }
+    .family-chip { display:inline-block; margin-bottom:10px; padding:4px 7px; color:#fff; border-radius:3px; font-size:calc(11px * var(--scale)); font-weight:600; }
+    .detail-title { margin:0 0 10px; color:#244f70; font-size:calc(17px * var(--scale)); font-weight:600; }
+    .detail-row { padding:8px 0; border-top:1px solid #edf0f2; color:#546572; font-size:calc(12px * var(--scale)); }
+    .detail-row b { display:block; margin-bottom:2px; color:#304957; font-size:calc(11px * var(--scale)); }
+    .pct { font-size:calc(20px * var(--scale)); font-weight:600; }
+    .note { margin-top:15px; padding-top:12px; border-top:1px solid var(--line); color:#7a8994; font-size:calc(11px * var(--scale)); line-height:1.5; }
+    .family-index { max-height:145px; overflow:auto; border:1px solid #e3e8ec; border-radius:3px; background:rgba(255,255,255,.65); }
+    .family-index-row { display:flex; align-items:flex-start; gap:7px; padding:6px 7px; border-bottom:1px solid #edf0f2; color:#526572; font-size:calc(11px * var(--scale)); line-height:1.3; }
+    .family-index-row:last-child { border-bottom:0; }
+    .family-index-row b { flex:0 0 30px; color:#244f70; }
+    .family-index-dot { flex:0 0 9px; width:9px; height:9px; margin-top:3px; border-radius:50%; }
+    .shape-legend { display:grid; gap:5px; margin-top:7px; padding-top:7px; border-top:1px solid #edf0f2; color:#526572; font-size:calc(11px * var(--scale)); }
+    .shape-item { display:flex; align-items:center; gap:8px; }
+    .shape-circle, .shape-diamond { display:inline-block; width:12px; height:12px; background:#24527a; }
+    .shape-circle { border-radius:50%; }
+    .shape-diamond { transform:rotate(45deg); }
+    .filter-panel { display:block; grid-column:1 / -1; border-top:1px solid var(--line); padding-top:14px; }
+    .filter-panel > h2 { display:none; }
+    .filter-panel .panel-body { display:grid; grid-template-columns:1.2fr 1fr 1.45fr 1fr auto; gap:18px; padding:0; align-items:start; }
+    .filter-panel .control { margin:0; }
+    .filter-panel .note { display:none; }
+    .filter-panel .font-control .font-tools { margin:0; }
+    .family-index-control { grid-column:1 / -1; }
+    .family-index-control details { border-top:1px solid #edf0f2; padding-top:8px; }
+    .family-index-control summary { cursor:pointer; user-select:none; }
+    .family-index-control .family-index { margin-top:8px; }
+    @media (max-width:1100px) { .layout { grid-template-columns:minmax(0,1fr) 220px; } .filter-panel .panel-body { grid-template-columns:1fr 1fr 1fr; } .family-index-control { grid-column:1 / -1; } }
+    @media (max-width:700px) { main { padding:0 4px 10px; } .layout { display:block; } .panel, .chart-panel { margin-bottom:14px; } .details { margin-top:0; border-left:0; border-top:1px solid var(--line); padding:12px 0 0; } .filter-panel .panel-body { display:block; } .filter-panel .control { margin-bottom:14px; } #chart { height:auto; min-height:0; } }
+  </style>
+</head>
+<body>
+  <header><div class="header-inner"><div><h1>Candidate Taxonomy - Radial View</h1><p class="subtitle">Visual organisation of retained HDBSCAN subclusters into 32 candidate semantic families.</p></div></div></header>
+  <main>
+    <div class="layout">
+      <section class="panel chart-panel"><div class="chart-head"><strong>Family wheel</strong><span>Hover for details · click to select</span></div><svg id="chart" viewBox="0 0 900 760" role="img" aria-label="Radial candidate taxonomy visualization"></svg></section>
+
+      <aside class="panel details"><h2>Selection</h2><div class="panel-body" id="details"><p class="empty">Select a cell or a family label to inspect its information.</p></div></aside>
+
+      <aside class="panel filter-panel"><h2>Explore</h2><div class="panel-body">
+        <div class="control"><label class="control-title" for="search">Search</label><input id="search" type="search" placeholder="Family or subcluster name"></div>
+        <div class="control"><span class="control-title">Model</span><label class="check"><input type="checkbox" value="qwen" checked> Qwen3-VL-8B</label><label class="check"><input type="checkbox" value="internvl" checked> InternVL3.5-8B</label><div class="shape-legend" aria-label="Model marker legend"><span class="shape-item"><i class="shape-circle"></i> Circle: Qwen3-VL-8B</span><span class="shape-item"><i class="shape-diamond"></i> Diamond: InternVL3.5-8B</span></div></div>
+        <div class="control"><span class="control-title">Anomaly category</span><div id="legend"></div></div>
+        <div class="control"><label class="control-title" for="order">Family order</label><select id="order"><option value="id">F01–F32</option><option value="anomaly">Mean anomalous-video percentage</option></select></div>
+        <div class="control font-control"><span class="control-title">Font size</span><div class="font-tools" aria-label="Font size"><button id="fontDown" title="Decrease font size">A−</button><button id="fontReset" title="Reset font size">A</button><button id="fontUp" title="Increase font size">A+</button></div></div>
+        <div class="control family-index-control"><details><summary class="control-title">Family index (F01–F32)</summary><div class="family-index" id="familyIndex"></div></details></div>
+        <div class="note">Each sector corresponds to one candidate family. Concentric positions follow the subcluster position within the workbook. Cell colour represents the anomalous-video category; marker shape identifies the model.</div>
+      </div></aside>
+    </div>
+  </main>
+  <script src="data/atlas-data.js"></script>
+  <script src="data/final-taxonomy-names.js"></script>
+  <script>
+    (() => {
+      const A = window.ATLAS, FINAL_NAMES = window.FINAL_TAXONOMY_NAMES || {}, svg = document.getElementById('chart'), NS = 'http://www.w3.org/2000/svg';
+      const CAT = Object.fromEntries(A.legend.map(x => [x.cat, x]));
+      const state = { models:new Set(['qwen','internvl']), cats:new Set(A.legend.map(x=>x.cat)), query:'', order:'id', selected:null, family:0 };
+      const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      const polar = (cx, cy, r, a) => [cx + Math.cos(a) * r, cy + Math.sin(a) * r];
+      const pathSector = (cx, cy, r1, r2, a1, a2) => { const p1=polar(cx,cy,r1,a1), p2=polar(cx,cy,r2,a1), p3=polar(cx,cy,r2,a2), p4=polar(cx,cy,r1,a2); return `M ${p1[0]} ${p1[1]} L ${p2[0]} ${p2[1]} A ${r2} ${r2} 0 0 1 ${p3[0]} ${p3[1]} L ${p4[0]} ${p4[1]} A ${r1} ${r1} 0 0 0 ${p1[0]} ${p1[1]} Z`; };
+      const el = (tag, attrs={}) => { const n=document.createElementNS(NS,tag); for(const [k,v] of Object.entries(attrs)) n.setAttribute(k,v); return n; };
+      const familyData = () => [...A.families].sort((a,b) => state.order === 'anomaly' ? (b.keys.reduce((s,k)=>s+(A.clusters[k]?.pct||0),0)/b.keys.length) - (a.keys.reduce((s,k)=>s+(A.clusters[k]?.pct||0),0)/a.keys.length) : a.id-b.id);
+      function nameOf(k, c) { return FINAL_NAMES[k] || c.name; }
+      function matches(k, c, f) { const q=state.query.toLowerCase(); return state.models.has(c.model) && state.cats.has(c.cat) && (!q || `${f.code} ${f.name} ${nameOf(k,c)}`.toLowerCase().includes(q)); }
+      function draw() {
+        svg.innerHTML=''; const cx=450, cy=365, inner=100, outer=330, step=(outer-inner)/10, families=familyData(), half=Math.PI/32*.84;
+        for(let r=0;r<=10;r++){ const circle=el('circle',{cx,cy,r:inner+r*step,class:'grid-line'}); svg.appendChild(circle); }
+        const title=el('text',{x:cx,y:cy-5,class:'center-title'}); title.textContent='Candidate taxonomy'; svg.appendChild(title); const sub=el('text',{x:cx,y:cy+15,class:'center-sub'}); sub.textContent='194 subclusters · 32 families'; svg.appendChild(sub);
+        families.forEach((f,i)=>{
+          const a=(i+.5)/32*Math.PI*2-Math.PI/2, g=el('g',{class:'family-group'}); const line=el('line',{x1:cx+Math.cos(a)*inner,y1:cy+Math.sin(a)*inner,x2:cx+Math.cos(a)*(outer+8),y2:cy+Math.sin(a)*(outer+8),class:'spoke'}); g.appendChild(line);
+          f.keys.forEach((k,r)=>{ const c=A.clusters[k]; if(!c) return; const active=matches(k,c,f), a1=a-half, a2=a+half, r1=inner+r*step+2, r2=inner+(r+1)*step-2; const path=el('path',{d:pathSector(cx,cy,r1,r2,a1,a2),fill:CAT[c.cat]?.color||'#ccc',class:`cell${active?'':' dim'}${state.selected===k?' selected':''}`}); path.dataset.key=k; path.addEventListener('mouseenter',()=>showDetails(k,f)); path.addEventListener('click',()=>{state.selected=state.selected===k?null:k; state.family=0; draw(); showDetails(state.selected ? k : null, state.selected ? f : null);}); g.appendChild(path); const [mx,my]=polar(cx,cy,(r1+r2)/2,a); const marker=c.model==='qwen'?el('circle',{cx:mx,cy:my,r:5,fill:'#24527a',class:'marker'}):el('polygon',{points:`${mx},${my-6} ${mx+6},${my} ${mx},${my+6} ${mx-6},${my}`,fill:'#24527a',class:'marker'}); g.appendChild(marker); });
+          const [lx,ly]=polar(cx,cy,outer+22,a), flip=Math.cos(a)>0; const label=el('text',{x:lx,y:ly,class:'family-label','text-anchor':'middle'}); label.textContent=f.code; label.style.cursor='pointer'; label.setAttribute('aria-label',`${f.code} · ${f.name}`); const labelTitle=el('title'); labelTitle.textContent=`${f.code} · ${f.name}`; label.appendChild(labelTitle); label.addEventListener('click',()=>{state.family=state.family===f.id?0:f.id; state.selected=null; draw(); showFamily(f);}); g.appendChild(label); svg.appendChild(g);
+        });
+      }
+      function showDetails(k,f){ const box=document.getElementById('details'); if(!k){ box.innerHTML='<p class="empty">Select a cell or a family label to inspect its information.</p>'; return; } const c=A.clusters[k], cat=CAT[c.cat]; box.innerHTML=`<span class="family-chip" style="background:${f.color}">${f.code}</span><h3 class="detail-title">${esc(nameOf(k,c))}</h3><div class="detail-row"><b>Candidate family</b>${esc(f.name)}</div><div class="detail-row"><b>Model and cluster</b>${c.model==='qwen'?'Qwen3-VL-8B':'InternVL3.5-8B'} · cluster ${c.id}</div><div class="detail-row"><b>Anomalous-video percentage</b><span class="pct" style="color:${cat.color}">${c.pct}%</span> · ${esc(c.cat)}</div><div class="detail-row"><b>Evidence points</b>${c.n}</div>`; }
+      function showFamily(f){ const mean=f.keys.reduce((s,k)=>s+(A.clusters[k]?.pct||0),0)/f.keys.length; const counts=f.keys.reduce((acc,k)=>{ const model=A.clusters[k]?.model; if(model==='qwen') acc.qwen+=1; if(model==='internvl') acc.internvl+=1; return acc; },{qwen:0,internvl:0}); document.getElementById('details').innerHTML=`<span class="family-chip" style="background:${f.color}">${f.code}</span><h3 class="detail-title">${esc(f.name)}</h3><div class="detail-row"><b>Subclusters</b>${f.keys.length}</div><div class="detail-row"><b>Models</b>${counts.qwen} Qwen clusters · ${counts.internvl} InternVL clusters</div><div class="detail-row"><b>Mean anomalous-video percentage</b><span class="pct">${Math.round(mean*10)/10}%</span></div>`; }
+      function makeLegend(){ const host=document.getElementById('legend'); host.innerHTML=A.legend.map(x=>`<label class="check"><input type="checkbox" data-cat="${esc(x.cat)}" checked><span class="legend-swatch" style="background:${x.color}"></span>${esc(x.cat)}</label>`).join(''); host.querySelectorAll('input').forEach(i=>i.addEventListener('change',()=>{i.checked?state.cats.add(i.dataset.cat):state.cats.delete(i.dataset.cat);draw();})); }
+      function makeFamilyIndex(){ const host=document.getElementById('familyIndex'); host.innerHTML=A.families.map(f=>`<div class="family-index-row"><span class="family-index-dot" style="background:${f.color}"></span><b>${f.code}</b><span>${esc(f.name)}</span></div>`).join(''); }
+      let fontScale=1; try { fontScale=Number(localStorage.getItem('taxonomy-font-scale'))||1; } catch (_) {}
+      function setFontScale(value){ fontScale=Math.max(.85,Math.min(1.3,value)); document.documentElement.style.setProperty('--scale',fontScale); try { localStorage.setItem('taxonomy-font-scale',fontScale); } catch (_) {} }
+      document.getElementById('fontDown').addEventListener('click',()=>setFontScale(fontScale-.1)); document.getElementById('fontReset').addEventListener('click',()=>setFontScale(1)); document.getElementById('fontUp').addEventListener('click',()=>setFontScale(fontScale+.1));
+      document.querySelectorAll('input[type=checkbox][value]').forEach(i=>i.addEventListener('change',()=>{i.checked?state.models.add(i.value):state.models.delete(i.value);draw();})); document.getElementById('search').addEventListener('input',e=>{state.query=e.target.value;draw();}); document.getElementById('order').addEventListener('change',e=>{state.order=e.target.value;draw();}); setFontScale(fontScale); makeLegend(); makeFamilyIndex(); draw();
+    })();
+  </script>
+</body>
+</html>

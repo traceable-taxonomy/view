@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="Interactive supplementary material for a corpus-grounded taxonomy of observable properties derived from VLM-generated surveillance-video evidence.">
+  <meta name="keywords" content="Vision-Language Models, Video Understanding, Surveillance Video, Observable Properties, Semantic Evidence, Taxonomy, Video Anomaly Analysis">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>From VLM-Generated Evidence to Observable Properties</title>
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/nerfies-index.css">
+  <link rel="stylesheet" href="./static/css/site.css">
+</head>
+<body>
+  <section class="hero publication-header">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">From VLM-Generated Evidence to Observable Properties: A Traceable Taxonomy for Surveillance Video Analysis</h1>
+            <br>
+            <h2 class="subtitle is-5 publication-subtitle">Interactive supplementary material</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified paper-abstract">
+            <p>Vision-Language Models (VLMs) can describe actions and scene context to support anomaly analysis in surveillance videos. However, their heterogeneous descriptions do not provide a consistent, traceable set of properties for comparing evidence across scenarios. We address the task of transforming free-form VLM-generated surveillance evidence into a corpus-grounded taxonomy of observable properties. Our human-reviewed method combines semantic embeddings and density-based clustering with independent cluster-suitability assessment and curated organization into semantic families, while preserving links to the original statements, generating models, and source videos.</p>
+            <p>Applied to evidence generated from UCF-Crime and CamNuvem, the method produced 222 candidate clusters. Two reviewers agreed on 94.59% of suitability decisions (&kappa; = 0.78). Following reconciliation, 194 clusters were retained and organized into 12 semantic families covering actions, interactions, objects, and scene conditions described by VLMs for videos with anomalous and non-anomalous dataset labels. The resulting taxonomy provides an inspectable foundation for comparing surveillance evidence and deriving application-specific properties.</p>
+            <p><strong>Keywords:</strong> Vision-Language Models, Video Understanding, Surveillance Video, Observable Properties, Semantic Evidence, Taxonomy, Video Anomaly Analysis.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section visualization-section is-light" id="taxonomy">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered visualization-heading">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Candidate Taxonomy - Radial View</h2>
+          <div class="content"><p>Radial representation of the final observable-property taxonomy and its semantic organization.</p></div>
+        </div>
+      </div>
+      <div class="visualization-frame radial-frame">
+        <iframe src="taxonomy_radial_embedded.html" title="Candidate taxonomy radial visualization"></iframe>
+      </div>
+      <p class="has-text-centered visualization-caption">Interactive view: select families and subclusters to inspect the taxonomy structure.</p>
+    </div>
+  </section>
+
+  <section class="section visualization-section" id="semantic-groups">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered visualization-heading">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">32 Semantic Groups - 3D UMAP</h2>
+          <div class="content"><p>Joint projection of the 194 retained clusters, colored by their assigned semantic group and preserving model provenance.</p></div>
+        </div>
+      </div>
+      <div class="visualization-frame">
+        <iframe src="umap_3d_candidate.html" title="Thirty-two semantic groups in a 3D UMAP projection"></iframe>
+      </div>
+      <p class="has-text-centered visualization-caption">Hover over points to inspect group, cluster, evidence, and video information.</p>
+    </div>
+  </section>
+
+  <section class="section visualization-section is-light" id="qwen">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered visualization-heading">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Qwen3-VL-8B-Instruct - 3D UMAP</h2>
+          <div class="content"><p>Evidence-level projection of the HDBSCAN clusters generated from Qwen3-VL-8B-Instruct descriptions.</p></div>
+        </div>
+      </div>
+      <div class="visualization-frame">
+        <iframe src="umap_3d_no_noise_Qwen.html" title="Qwen3-VL-8B-Instruct clusters in a 3D UMAP projection"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <section class="section visualization-section" id="internvl">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered visualization-heading">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">InternVL3.5-8B - 3D UMAP</h2>
+          <div class="content"><p>Evidence-level projection of the HDBSCAN clusters generated from InternVL3.5-8B descriptions.</p></div>
+        </div>
+      </div>
+      <div class="visualization-frame">
+        <iframe src="umap_3d_no_noise_InternVL.html" title="InternVL3.5-8B clusters in a 3D UMAP projection"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content has-text-centered">
+            <p>Website template adapted from <a href="https://nerfies.github.io/">Nerfies</a>, distributed under the <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0 license</a>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
